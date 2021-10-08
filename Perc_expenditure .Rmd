@@ -1,0 +1,66 @@
+---
+title: "Funding received for laboratory infrastructure, equipment and supplies as proportion of actual expenditure vs TB percentage reported for different age and sex groups"
+output: html_notebook
+---
+
+Aim: Create data frame and linear model looking at the relationship between the percentage funding received compared to actual expenditure on laboratory facilities and the percentage of TB reported in children of different age and sex groups. 
+
+STEP 1: Load the data. 
+
+```{r}
+setwd("~/Desktop/AFP/TB MODELLING 2/TB Data")
+lab <- read_csv("TB_expenditure.csv")
+```
+
+STEP 2: Tidy the TB_expenditure data 
+
+```{r}
+lab1 <- lab[, c(1,3,6,11,12,27,28,33,34)]
+lab_2019 <- filter(lab1, year == 2019)
+lab_2019 <- lab_2019[, -3]
+lab_perc <- mutate(lab_2019, "perc_lab" = rcvd_lab/exp_lab * 100, "perc_patsup" = rcvd_patsup/exp_patsup * 100, "perc_tot_fund" = rcvd_tot/exp_tot * 100) 
+lab_perc <- lab_perc[ , c(1,2,3,4,9,5,6,10,7,8,11)]
+```
+
+STEP 3: Combine with bigdata_TB data frame to allow analyses 
+
+```{r}
+bigTB_lab <- cbind(bigdata_TB, lab_perc[, c(5, 8, 11)])
+bigTB_lab$perc_tot_fund[bigTB_lab$perc_tot_fund > 500] <- NA
+bigTB_lab$perc_lab[bigTB_lab$perc_lab > 500] <- NA
+bigTB_lab$perc_patsup[bigTB_lab$perc_patsup > 500] <- NA
+```
+
+STEP 4: Regression with total expenditure and percentage reported cases fr 0-14 years 
+
+```{r}
+mod_totspen <- lm(bigTB_lab$perc_tot014 ~ bigTB_lab$perc_tot_fund)
+summary(mod_totspen)
+
+plot(x = bigTB_lab$perc_tot_fund, y = bigTB_lab$perc_tot014, xlab = "perc_tot_fund", ylab = "perc_tot014")
+abline(mod_totspen, col = "red", lwd = 2)
+```
+
+STEP 5: Regression with lab expenditure vs percentage reported TB cases aged 0-14 years 
+
+```{r}
+mod_labspen <- lm(bigTB_lab$perc_tot014 ~ bigTB_lab$perc_lab)
+summary(mod_labspen)
+
+plot(x = bigTB_lab$perc_lab, y = bigTB_lab$perc_tot014, xlab = "perc_lab", ylab = "perc_tot014")
+abline(mod_labspen, col = "red", lwd = 2)
+
+```
+STEP 6: Regression with percentage of patient support expenditure vs percentage reported TB in ages 0-14 years 
+
+```{r}
+mod_patsup <- lm(bigTB_lab$perc_tot014 ~ bigTB_lab$perc_patsup)
+summary(mod_patsup)
+
+plot(x = bigTB_lab$perc_patsup, y = bigTB_lab$perc_tot014, xlab = "perc_patsup", ylab = "perc_tot014")
+abline(mod_patsup, col = "red", lwd = 2)
+
+
+```
+
+

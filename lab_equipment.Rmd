@@ -1,0 +1,119 @@
+---
+title: "Relationship between availability of laboratory equipment and reporting rates of TB in children aged 0-14 years"
+output: html_notebook
+---
+
+Aim: Create model looking at the relationship between the number of labs in a country with TB diagnostic technology (including adjusting for estimated TB burden) and the rate of reporting of cases of TB in children aged 0-14 years.
+
+STEP 1: Load the necessary data (laboratory data + total TB incidence data)
+
+```{r}
+setwd("~/Desktop/AFP/TB MODELLING 2/TB Data")
+incid_data <- read_csv("TB_burden_main.csv")
+incid_data <- incid_data[, c(1,3,6,7,8)]
+
+setwd("~/Desktop/AFP/TB MODELLING 2/Resource Factors")
+lab_data <- read_csv("TB_laboratories_2021-10-06.csv")
+lab_data <- lab_data[, c(1,3,6,26:30)]
+```
+
+STEP 2: Refining the data 
+
+```{r}
+lab_2019 <- filter(lab_data, year == 2019)
+lab_2019 <- lab_2019[, -3]
+
+incid_2019 <- filter(incid_data, year == 2019)
+incid_2019 <- incid_2019[, -3]
+```
+
+STEP 3: Create data frame with lab data and the estimated TB incidence per year 
+
+```{r}
+lab_incid <- cbind(lab_2019, incid_2019[, 4])
+lab_adj <- mutate(lab_incid, "adj_smear" = smear/e_inc_100k, "adj_xpert" = xpert/e_inc_100k, "adj_culture" = culture/e_inc_100k)
+lab_adj <- lab_adj[, c(1,2,3,9,5,6,10,7,11)]
+```
+
+STEP 4: Combining data frame with bigdata_TB to allow regression analyses to be made
+
+```{r}
+big_labequip <- cbind(bigdata_TB, lab_adj[, c(3:9)])
+is.na(big_labequip$adj_xpert) <- sapply(big_labequip$adj_xpert, is.infinite)
+is.na(big_labequip$adj_xpert) <- sapply(big_labequip$adj_xpert, is.nan)
+is.na(big_labequip$adj_smear) <- sapply(big_labequip$adj_smear, is.infinite)
+is.na(big_labequip$adj_smear) <- sapply(big_labequip$adj_smear, is.nan)
+is.na(big_labequip$adj_culture) <- sapply(big_labequip$adj_culture, is.infinite)
+is.na(big_labequip$adj_culture) <- sapply(big_labequip$adj_culture, is.nan)
+
+```
+
+
+STEP 5: Regression analyses for xpert and 0-4 years 
+
+```{r}
+big_labequip$adj_xpert[big_labequip$adj_xpert > 15] <- NA #removing outliers
+
+is.na(big_labequip$perc_tot014) <- sapply(big_labequip$perc_tot014, is.infinite)
+is.na(big_labequip$perc_tot014) <- sapply(big_labequip$perc_tot014, is.nan)
+
+mod_xpert_04 <- lm(big_labequip$perc_tot04 ~ big_labequip$adj_xpert)
+summary(mod_xpert_04)
+
+plot(x = big_labequip$adj_xpert, y = big_labequip$perc_tot04, xlab = "adj_xpert", ylab = "perc_tot04")
+abline(mod_xpert_04, col = "red", lwd = 2)
+
+```
+
+STEP 6: Regression analysis with Xpert and percentage TB diagnosis in children aged 5-14
+
+```{r}
+is.na(big_labequip$perc_tot514) <- sapply(big_labequip$perc_tot514, is.infinite)
+is.na(big_labequip$perc_tot514) <- sapply(big_labequip$perc_tot514, is.nan)
+
+mod_xpert_514 <- lm(big_labequip$perc_tot514 ~ big_labequip$adj_xpert)
+summary(mod_xpert_514)
+
+plot(x = big_labequip$adj_xpert, y = big_labequip$perc_tot514, xlab = "adj_xpert", ylab = "perc_tot514")
+abline(mod_xpert_514, col = "red", lwd = 2)
+```
+
+STEP 7: Regression analyses with smear and aged 0-4
+
+```{r}
+mod_smear_04 <- lm(big_labequip$perc_tot04 ~ big_labequip$adj_smear)
+summary(mod_smear_04)
+
+plot(x = big_labequip$adj_smear, y = big_labequip$perc_tot04, xlab = "adj_smear", ylab = "perc_tot04")
+abline(mod_smear_04, col = "red", lwd = 2)
+
+```
+STEP 8: Regression analysis with smear and ages 5-14 years 
+
+```{r}
+mod_smear_514 <- lm(big_labequip$perc_tot514 ~ big_labequip$adj_smear)
+summary(mod_smear_514)
+
+plot(x = big_labequip$adj_smear, y = big_labequip$perc_tot514, xlab = "adj_smear", ylab = "perc_tot514")
+abline(mod_smear_514, col = "red", lwd = 2)
+```
+STEP 9: Regression analysis with culture and aged 0-4 years
+
+```{r}
+mod_culture_04 <- lm(big_labequip$perc_tot04 ~ big_labequip$adj_culture)
+summary(mod_culture_04)
+
+plot(x = big_labequip$adj_culture, y = big_labequip$perc_tot04, xlab = "adj_culture", ylab = "perc_tot04")
+abline(mod_culture_04, col = "red", lwd = 2)
+
+```
+STEP 10: Regression analysis with culture for ages 5-14 years
+
+```{r}
+mod_culture_514 <- lm(big_labequip$perc_tot514 ~ big_labequip$adj_culture)
+summary(mod_culture_514)
+
+plot(x = big_labequip$adj_culture, y = big_labequip$perc_tot514, xlab = "adj_culture", ylab = "perc_tot514")
+abline(mod_culture_514, col = "red", lwd = 2)
+```
+

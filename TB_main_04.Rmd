@@ -1,0 +1,52 @@
+---
+title: "Percentage of Reported TB Cases for Children Aged 0-4 Years in 2019 including sex disaggregation"
+output: html_notebook
+---
+
+Aim: Create data frame of data for children aged 0-4 years including the burden estimate, number of case notifications, absolute difference and percentage reported for 2019
+
+STEP 1: Refining original burden data to include only columns of interest. 
+
+```{r}
+setwd("~/Desktop/AFP/TB MODELLING 2/TB Data")
+
+data <- read_csv("TB_burden_agesex.csv")
+data_filter <- data[ , c(1,3,8,9,11)]
+```
+
+STEP 2: Isolate only data for both sexes aged 0-4 years. 
+
+```{r}
+data_04 <- filter(data_filter, age_group == "0-4")
+data_m <- filter(data_04, sex == "m")
+data_f <- filter(data_04, sex == "f")
+data_mf <- cbind(data_m, data_f$best)
+colnames(data_mf)[colnames(data_mf) == "data_f$best"] <- "est_f04"
+colnames(data_mf)[colnames(data_mf) == "best"] <- "est_m04"
+data_mf <- data_mf[, c(1,2,5,6)]
+data_total <- mutate(data_mf, "total_est04" = est_m04 + est_f04)
+```
+
+STEP 3: Incorporating the case notification data 
+
+```{r}
+setwd("~/Desktop/AFP/TB MODELLING 2/TB Data")
+notif <- read_csv("TB_notifications.csv")
+notif04 <- notif[, c(1,3,6,100,115)]
+notif_2019 <- filter(notif04, year == 2019)
+identical(notif_2019$iso3, data_total$iso3)
+burden_notif <- cbind(data_total, notif_2019[, c(4, 5)])
+colnames(burden_notif)[colnames(burden_notif) == "newrel_m04"] <- "notif_m04"
+colnames(burden_notif)[colnames(burden_notif) == "newrel_f04"] <- "notif_f04"
+notif_total <- mutate(burden_notif, "total_notif04" = notif_m04 + notif_f04)
+```
+
+STEP 4: Including columns for absolute difference and percentage difference for males, females and both 
+
+```{r}
+dif_04 <- mutate(notif_total, "dif_m04" = est_m04 - notif_m04, "perc_m04" = notif_m04/est_m04 * 100, "dif_f04" = est_f04 - notif_f04, "perc_f04" = notif_f04/est_f04 * 100, "dif_tot" = total_est04 - total_notif04, "perc_tot04" = total_notif04/total_est04 * 100)
+dif_04 <- dif_04[ , c(1, 2, 3, 6, 9, 10, 4, 7, 11, 12, 5, 8, 13, 14)]
+colnames(dif_04)[colnames(dif_04) == "total_est04"] <- "est_tot04"
+colnames(dif_04)[colnames(dif_04) == "total_notif04"] <- "notif_tot04"
+```
+

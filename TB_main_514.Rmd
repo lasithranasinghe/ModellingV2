@@ -1,0 +1,49 @@
+---
+title: "Percentage of Reported TB Cases for Children Aged 5-14 Years in 2019 including sex disaggregation"
+output: html_notebook
+---
+
+Aim: Create data frame of data for children aged 5-14 years including the burden estimate, number of case notifications, absolute difference and percentage reported for 2019
+
+STEP 1: Refining original burden data to include only columns of interest. 
+
+```{r}
+setwd("~/Desktop/AFP/TB MODELLING 2/TB Data")
+data <- read_csv("TB_burden_agesex.csv")
+data <- data[, c(1,3,8,9,11)]
+data_514 <- filter(data, age_group == "5-14")
+data_m514 <- filter(data_514, sex == "m")
+data_f514 <- filter(data_514, sex == "f")
+bothsex_514 <- cbind(data_m514, data_f514$best)
+colnames(bothsex_514)[colnames(bothsex_514) == "data_f514$best"] <- "est_f514"
+colnames(bothsex_514)[colnames(bothsex_514) == "best"] <- "est_m514"
+bothsex_514 <- bothsex_514[ , c(1, 2, 5 ,6)]
+total_514 <- mutate(bothsex_514, "total_514" = est_f514 + est_m514)
+```
+
+STEP 2: Including the notification date for age group 5-14 years 
+
+```{r}
+setwd("~/Desktop/AFP/TB MODELLING 2/TB Data")
+notif514 <- read_csv("TB_notifications.csv")
+notif514 <- notif514[, c(1,3,6,103,118)]
+not514_2019 <- filter(notif514, year == 2019)
+not514_2019 <- not514_2019[, -3]
+bound_514_2019 <- cbind(total_514, not514_2019[, c(3,4)])
+colnames(bound_514_2019)[colnames(bound_514_2019) == "newrel_m514"] <- "notif_m514"
+colnames(bound_514_2019)[colnames(bound_514_2019) == "newrel_f514"] <- "notif_f514"
+colnames(bound_514_2019)[colnames(bound_514_2019) == "total_514"] <- "total_est514"
+bound_514_fin <- mutate(bound_514_2019, "total_notif514" = notif_m514 + notif_f514)
+
+```
+
+STEP 3: Including columns for absolute difference and percentage reported for each sex group 
+
+```{r}
+dif_514 <- mutate(bound_514_fin, "dif_m514" = est_m514 - notif_m514, "perc_m514" = notif_m514/est_m514 * 100, "dif_f514" = est_f514 - notif_f514, "perc_f514" = notif_f514/est_f514 * 100, "dif_tot_514" = total_est514 - total_notif514, "perc_tot514" = total_notif514/total_est514 * 100)
+dif_514 <- dif_514[, c(1,2,3,6,9,10,4,7,11,12,5,8,13,14)]
+colnames(dif_514)[colnames(dif_514) == "total_est514"] <- "est_tot514"
+colnames(dif_514)[colnames(dif_514) == "total_notif514"] <- "notif_tot514"
+```
+
+

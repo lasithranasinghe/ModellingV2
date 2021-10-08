@@ -1,0 +1,42 @@
+---
+title: "Percentage of Reported TB Cases for Children Aged 0-14 Years in 2019 including sex disaggregation"
+output: html_notebook
+---
+
+Aim: Create data frame of data for children aged 0-14 years including the burden estimate, number of case notifications, absolute difference and percentage reported for 2019
+
+STEP 1: Refining original burden data to include only columns of interest. 
+
+```{r}
+data <- read_csv("TB_burden_agesex.csv")
+data <- data[, c(1, 3,8,9,11)]
+data_all <- filter(data, age_group == "0-14")
+data_allm <- filter(data_all, sex == "m")
+data_allf <- filter(data_all, sex == "f")
+data_allA <- filter(data_all, sex == "a")
+bound_all <- cbind(data_allm, data_allf$best, data_allA$best)
+bound_all <- bound_all[, -c(3, 4)]
+colnames(bound_all) <- c("country", "iso3", "est_m014", "est_f014", "est_tot_014")
+```
+
+STEP 2: Bringing in data for notifications for both sexes 
+
+```{r}
+notif_all <- read_csv("TB_notifications.csv")
+notif_014 <- notif_all[, c(1, 3, 6, 104, 119)]
+notif_014_2019 <- filter(notif_014, year == 2019)
+all_2019 <- notif_014_2019[, -3]
+all_2019 <- mutate(all_2019, "total_notif014" = newrel_m014 + newrel_f014)
+colnames(all_2019)[colnames(all_2019) == "newrel_m014"] <- "notif_m014"
+colnames(all_2019)[colnames(all_2019) == "newrel_f014"] <- "notif_f014"
+burd_not_014 <- cbind(bound_all, all_2019[, c(3,4,5)])
+```
+
+STEP 3: Adding columns for absolute difference and percentage reported for the different groups
+
+```{r}
+dif_014 <- mutate(burd_not_014, "dif_m014" = est_m014 - notif_m014, "perc_m014" = notif_m014/est_m014 * 100, "dif_f014" = est_f014 - notif_f014, "perc_f014" = notif_f014/est_f014 * 100, "dif_tot014" = est_tot_014 - total_notif014, "perc_tot014" = total_notif014/est_tot_014 * 100)
+dif_014 <- dif_014[, c(1,2,3,6,9,10,4,7,11,12,5,8,13,14)]
+colnames(dif_014)[colnames(dif_014) == "total_notif014"] <- "notif_tot014"
+```
+

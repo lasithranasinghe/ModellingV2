@@ -1,0 +1,86 @@
+---
+title: "Age disaggregated percentage reporting relative to the overall TB incidence per 100,000 population"
+output: html_notebook
+---
+
+Aim: Observe the relationship between percentage reporting of TB in age groups 0-4 and 5-14 and the overall TB incidence per 100,000 population.
+
+STEP 1: Load the data
+
+```{r}
+setwd("~/Desktop/AFP/TB MODELLING 2/TB Data")
+incidence <- read_csv("TB_burden_main.csv")
+incidence <- incidence[, c(1,3,6,8, 14, 17,29, 35, 44)]
+incidence_2019 <- filter(incidence, year == 2019)
+incidence_2019 <- incidence_2019[, -3]
+
+ltfu <- read_csv("TB_outcomes.csv")
+ltfu <- ltfu[, c(1,3,6, 45:50, 63:68)]
+ltfu_2018 <- filter(ltfu, year == 2018)
+ltfu_2018 <- ltfu_2018[, -3]
+ltfu_rate <- mutate(ltfu_2018, "perc_ltfu_tot" = newrel_lost/newrel_coh * 100, "perc_ltfu_014" = newrel_014_lost/newrel_014_coh * 100)
+ltfu_rate <- ltfu_rate[, c(1:8, 15, 9:14, 16)]
+
+```
+
+STEP 2: Combining with bigdata_TB and adding ltfu data 
+
+```{r}
+incid_notif <- cbind(bigdata_TB, incidence_2019[, c(3:8)], ltfu_rate[, c(3:16)])
+
+```
+
+STEP 3: Regression analysis of age disaggregated percentage TB reported vs the total TB incidence 
+
+```{r}
+#Age Group 0-14 years 
+is.na(incid_notif$perc_tot014) <- sapply(incid_notif$perc_tot014, is.infinite)
+is.na(incid_notif$perc_tot014) <- sapply(incid_notif$perc_tot014, is.nan)
+
+incid_014 <- lm(incid_notif$perc_tot014 ~ incid_notif$e_inc_100k)
+summary(incid_014)
+
+plot(x = incid_notif$e_inc_100k, y = incid_notif$perc_tot014, xlab = "e_inc_100k", ylab = "perc_tot014")
+abline(incid_014, col = "red", lwd = 2)
+
+#Age Group 0-4 years 
+is.na(incid_notif$perc_tot04) <- sapply(incid_notif$perc_tot04, is.infinite)
+is.na(incid_notif$perc_tot04) <- sapply(incid_notif$perc_tot04, is.nan)
+
+incid_04 <- lm(incid_notif$perc_tot04 ~ incid_notif$e_inc_100k)
+summary(incid_04)
+
+plot(x = incid_notif$e_inc_100k, y = incid_notif$perc_tot04, xlab = "e_inc_100k", ylab = "perc_tot04")
+abline(incid_04, col = "red", lwd = 2)
+
+#Age Group 5-14 years
+is.na(incid_notif$perc_tot514) <- sapply(incid_notif$perc_tot514, is.infinite)
+is.na(incid_notif$perc_tot514) <- sapply(incid_notif$perc_tot514, is.nan)
+
+incid_514 <- lm(incid_notif$perc_tot514 ~ incid_notif$e_inc_100k)
+summary(incid_514)
+
+plot(x = incid_notif$e_inc_100k, y = incid_notif$perc_tot514, xlab = "e_inc_100k", ylab = "perc_tot514")
+abline(incid_514, col = "red", lwd = 2)
+
+```
+STEP 4: Regression analysis of age disaggregated percentage TB reported vs TB treatment success and loss to follow up rates 
+
+```{r}
+#Age 0-14 years vs TB treatment success in 0-14 years 
+tsr_014 <- lm(incid_notif$perc_tot014 ~ incid_notif$c_newrel_014_tsr)
+summary(tsr_014)
+
+plot(x = incid_notif$c_newrel_014_tsr, y = incid_notif$perc_tot014, xlab = "tsr_014", ylab = "perc_tot_014")
+abline(tsr_014, col = "red", lwd = 2)
+
+#Age 0-14 years vs LTFU in 0-14 years 
+ltfu_014 <- lm(incid_notif$perc_tot014 ~ incid_notif$perc_ltfu_014)
+summary(ltfu_014)
+
+plot(x = incid_notif$perc_ltfu_014, y = incid_notif$perc_tot014, xlab = "perc_ltfu_014", ylab = "perc_tot_014")
+abline(ltfu_014, col = "red", lwd = 2)
+
+
+```
+
