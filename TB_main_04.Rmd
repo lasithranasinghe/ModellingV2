@@ -17,6 +17,7 @@ data_filter <- data[ , c(1,3,8,9,11)]
 STEP 2: Isolate only data for both sexes aged 0-4 years. 
 
 ```{r}
+setwd("~/Desktop/AFP/TB MODELLING 2/TB Data")
 data_04 <- filter(data_filter, age_group == "0-4")
 data_m <- filter(data_04, sex == "m")
 data_f <- filter(data_04, sex == "f")

@@ -219,9 +219,14 @@ pre code {
 <p>STEP 1: Refining original burden data to include only columns of interest.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2V0d2QoXCJ+L0Rlc2t0b3AvQUZQL1RCIE1PREVMTElORyAyL1RCIERhdGFcIilcbmRhdGEgPC0gcmVhZF9jc3YoXCJUQl9idXJkZW5fYWdlc2V4LmNzdlwiKVxuYGBgIn0= -->
-<pre class="r"><code>setwd(&quot;~/Desktop/AFP/TB MODELLING 2/TB Data&quot;)
-data &lt;- read_csv(&quot;TB_burden_agesex.csv&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2V0d2QoXCJ+L0Rlc2t0b3AvQUZQL1RCIE1PREVMTElORyAyL1RCIERhdGFcIilcbmBgYCJ9 -->
+<pre class="r"><code>setwd(&quot;~/Desktop/AFP/TB MODELLING 2/TB Data&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogVGhlIHdvcmtpbmcgZGlyZWN0b3J5IHdhcyBjaGFuZ2VkIHRvIC9Vc2Vycy9MYXNpdGgvRGVza3RvcC9BRlAvVEIgTU9ERUxMSU5HIDIvVEIgRGF0YSBpbnNpZGUgYSBub3RlYm9vayBjaHVuay4gVGhlIHdvcmtpbmcgZGlyZWN0b3J5IHdpbGwgYmUgcmVzZXQgd2hlbiB0aGUgY2h1bmsgaXMgZmluaXNoZWQgcnVubmluZy4gVXNlIHRoZSBrbml0ciByb290LmRpciBvcHRpb24gaW4gdGhlIHNldHVwIGNodW5rIHRvIGNoYW5nZSB0aGUgd29ya2luZyBkaXJlY3RvcnkgZm9yIG5vdGVib29rIGNodW5rcy5cbiJ9 -->
+<pre><code>Warning: The working directory was changed to /Users/Lasith/Desktop/AFP/TB MODELLING 2/TB Data inside a notebook chunk. The working directory will be reset when the chunk is finished running. Use the knitr root.dir option in the setup chunk to change the working directory for notebook chunks.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YSA8LSByZWFkX2NzdihcIlRCX2J1cmRlbl9hZ2VzZXguY3N2XCIpXG5gYGAifQ== -->
+<pre class="r"><code>data &lt;- read_csv(&quot;TB_burden_agesex.csv&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiUm93czogNzI5OCBDb2x1bW5zOiAxM1xu4pSA4pSAIENvbHVtbiBzcGVjaWZpY2F0aW9uIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICg5KTogY291bnRyeSwgaXNvMiwgaXNvMywgaXNvX251bWVyaWMsIG1lYXN1cmUsIHVuaXQsIGFnZV9ncm91cCwgc2V4LCByaXNrX2ZhY3RvclxuZGJsICg0KTogeWVhciwgYmVzdCwgbG8sIGhpXG5cbuKEuSBVc2UgYHNwZWMoKWAgdG8gcmV0cmlldmUgdGhlIGZ1bGwgY29sdW1uIHNwZWNpZmljYXRpb24gZm9yIHRoaXMgZGF0YS5cbuKEuSBTcGVjaWZ5IHRoZSBjb2x1bW4gdHlwZXMgb3Igc2V0IGBzaG93X2NvbF90eXBlcyA9IEZBTFNFYCB0byBxdWlldCB0aGlzIG1lc3NhZ2UuXG4ifQ== -->
 <pre><code>Rows: 7298 Columns: 13
@@ -233,7 +238,7 @@ dbl (4): year, best, lo, hi
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YSA8LSBkYXRhWywgYygxLDMsOCw5LDExKV1cbmRhdGFfNTE0IDwtIGZpbHRlcihkYXRhLCBhZ2VfZ3JvdXAgPT0gXCI1LTE0XCIpXG5kYXRhX201MTQgPC0gZmlsdGVyKGRhdGFfNTE0LCBzZXggPT0gXCJtXCIpXG5kYXRhX2Y1MTQgPC0gZmlsdGVyKGRhdGFfNTE0LCBzZXggPT0gXCJmXCIpXG5ib3Roc2V4XzUxNCA8LSBjYmluZChkYXRhX201MTQsIGRhdGFfZjUxNCRiZXN0KVxuY29sbmFtZXMoYm90aHNleF81MTQpW2NvbG5hbWVzKGJvdGhzZXhfNTE0KSA9PSBcImRhdGFfZjUxNCRiZXN0XCJdIDwtIFwiZXN0X2Y1MTRcIlxuY29sbmFtZXMoYm90aHNleF81MTQpW2NvbG5hbWVzKGJvdGhzZXhfNTE0KSA9PSBcImJlc3RcIl0gPC0gXCJlc3RfbTUxNFwiXG5ib3Roc2V4XzUxNCA8LSBib3Roc2V4XzUxNFsgLCBjKDEsIDIsIDUgLDYpXVxudG90YWxfNTE0IDwtIG11dGF0ZSh0b3RhbF81MTQsIFwidG90YWxfNTE0XCIgPSBlc3RfZjUxNCArIGVzdF9tNTE0KVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YSA8LSBkYXRhWywgYygxLDMsOCw5LDExKV1cbmRhdGFfNTE0IDwtIGZpbHRlcihkYXRhLCBhZ2VfZ3JvdXAgPT0gXCI1LTE0XCIpXG5kYXRhX201MTQgPC0gZmlsdGVyKGRhdGFfNTE0LCBzZXggPT0gXCJtXCIpXG5kYXRhX2Y1MTQgPC0gZmlsdGVyKGRhdGFfNTE0LCBzZXggPT0gXCJmXCIpXG5ib3Roc2V4XzUxNCA8LSBjYmluZChkYXRhX201MTQsIGRhdGFfZjUxNCRiZXN0KVxuY29sbmFtZXMoYm90aHNleF81MTQpW2NvbG5hbWVzKGJvdGhzZXhfNTE0KSA9PSBcImRhdGFfZjUxNCRiZXN0XCJdIDwtIFwiZXN0X2Y1MTRcIlxuY29sbmFtZXMoYm90aHNleF81MTQpW2NvbG5hbWVzKGJvdGhzZXhfNTE0KSA9PSBcImJlc3RcIl0gPC0gXCJlc3RfbTUxNFwiXG5ib3Roc2V4XzUxNCA8LSBib3Roc2V4XzUxNFsgLCBjKDEsIDIsIDUgLDYpXVxudG90YWxfNTE0IDwtIG11dGF0ZShib3Roc2V4XzUxNCwgXCJ0b3RhbF81MTRcIiA9IGVzdF9mNTE0ICsgZXN0X201MTQpXG5gYGAifQ== -->
 <pre class="r"><code>data &lt;- data[, c(1,3,8,9,11)]
 data_514 &lt;- filter(data, age_group == &quot;5-14&quot;)
 data_m514 &lt;- filter(data_514, sex == &quot;m&quot;)
@@ -242,12 +247,8 @@ bothsex_514 &lt;- cbind(data_m514, data_f514$best)
 colnames(bothsex_514)[colnames(bothsex_514) == &quot;data_f514$best&quot;] &lt;- &quot;est_f514&quot;
 colnames(bothsex_514)[colnames(bothsex_514) == &quot;best&quot;] &lt;- &quot;est_m514&quot;
 bothsex_514 &lt;- bothsex_514[ , c(1, 2, 5 ,6)]
-total_514 &lt;- mutate(total_514, &quot;total_514&quot; = est_f514 + est_m514)</code></pre>
+total_514 &lt;- mutate(bothsex_514, &quot;total_514&quot; = est_f514 + est_m514)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gbXV0YXRlKHRvdGFsXzUxNCwgdG90YWxfNTE0ID0gZXN0X2Y1MTQgKyBlc3RfbTUxNCkgOiBcbiAgb2JqZWN0ICd0b3RhbF81MTQnIG5vdCBmb3VuZFxuIn0= -->
-<pre><code>Error in mutate(total_514, total_514 = est_f514 + est_m514) : 
-  object &#39;total_514&#39; not found</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>STEP 2: Including the notification date for age group 5-14 years</p>
@@ -272,7 +273,7 @@ dbl (172): year, new_sp, new_sn, new_su, new_ep, new_oth, ret_rel, ret_taf, ret_
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubm90aWY1MTQgPC0gbm90aWY1MTRbLCBjKDEsMyw2LDEwMywxMTgpXVxubm90NTE0XzIwMTkgPC0gZmlsdGVyKG5vdGlmNTE0LCB5ZWFyID09IDIwMTkpXG5ub3Q1MTRfMjAxOSA8LSBub3Q1MTRfMjAxOVssIC0zXVxuYm91bmRfNTE0XzIwMTkgPC0gY2JpbmQodG90YWxfNTE0LCBub3Q1MTRfMjAxOVssIGMoMyw0KV0pXG5jb2xuYW1lcyhib3VuZF81MTRfMjAxOSlbY29sbmFtZXMoYm91bmRfNTE0XzIwMTkpID09IFwibmV3cmVsX201MTRcIl0gPC0gXCJub3RpZl9tNTE0XCJcbmNvbG5hbWVzKGJvdW5kXzUxNF8yMDE5KVtjb2xuYW1lcyhib3VuZF81MTRfMjAxOSkgPT0gXCJuZXdyZWxfZjUxNFwiXSA8LSBcIm5vdGlmX2Y1MTRcIlxuY29sbmFtZXMoYm91bmRfNTE0XzIwMTkpW2NvbG5hbWVzKGJvdW5kXzUxNF8yMDE5KSA9PSBcInRvdGFsXzUxNFwiXSA8LSBcInRvdGFsX2VzdDUxNFwiXG5cbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubm90aWY1MTQgPC0gbm90aWY1MTRbLCBjKDEsMyw2LDEwMywxMTgpXVxubm90NTE0XzIwMTkgPC0gZmlsdGVyKG5vdGlmNTE0LCB5ZWFyID09IDIwMTkpXG5ub3Q1MTRfMjAxOSA8LSBub3Q1MTRfMjAxOVssIC0zXVxuYm91bmRfNTE0XzIwMTkgPC0gY2JpbmQodG90YWxfNTE0LCBub3Q1MTRfMjAxOVssIGMoMyw0KV0pXG5jb2xuYW1lcyhib3VuZF81MTRfMjAxOSlbY29sbmFtZXMoYm91bmRfNTE0XzIwMTkpID09IFwibmV3cmVsX201MTRcIl0gPC0gXCJub3RpZl9tNTE0XCJcbmNvbG5hbWVzKGJvdW5kXzUxNF8yMDE5KVtjb2xuYW1lcyhib3VuZF81MTRfMjAxOSkgPT0gXCJuZXdyZWxfZjUxNFwiXSA8LSBcIm5vdGlmX2Y1MTRcIlxuY29sbmFtZXMoYm91bmRfNTE0XzIwMTkpW2NvbG5hbWVzKGJvdW5kXzUxNF8yMDE5KSA9PSBcInRvdGFsXzUxNFwiXSA8LSBcInRvdGFsX2VzdDUxNFwiXG5ib3VuZF81MTRfZmluIDwtIG11dGF0ZShib3VuZF81MTRfMjAxOSwgXCJ0b3RhbF9ub3RpZjUxNFwiID0gbm90aWZfbTUxNCArIG5vdGlmX2Y1MTQpXG5cbmBgYCJ9 -->
 <pre class="r"><code>notif514 &lt;- notif514[, c(1,3,6,103,118)]
 not514_2019 &lt;- filter(notif514, year == 2019)
 not514_2019 &lt;- not514_2019[, -3]
@@ -280,6 +281,7 @@ bound_514_2019 &lt;- cbind(total_514, not514_2019[, c(3,4)])
 colnames(bound_514_2019)[colnames(bound_514_2019) == &quot;newrel_m514&quot;] &lt;- &quot;notif_m514&quot;
 colnames(bound_514_2019)[colnames(bound_514_2019) == &quot;newrel_f514&quot;] &lt;- &quot;notif_f514&quot;
 colnames(bound_514_2019)[colnames(bound_514_2019) == &quot;total_514&quot;] &lt;- &quot;total_est514&quot;
+bound_514_fin &lt;- mutate(bound_514_2019, &quot;total_notif514&quot; = notif_m514 + notif_f514)
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->

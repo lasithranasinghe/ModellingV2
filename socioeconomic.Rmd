@@ -1,0 +1,102 @@
+---
+title: "Economic variables and TB percentage reported"
+output: html_notebook
+---
+
+Aim: To look at the relationship between various socioeconomic variables (GDP, secondary school enrolment, rural population as percentage of total population, adolescent population as percentage of total population)
+
+STEP 1: Load the data 
+```{r}
+setwd("~/Desktop/AFP/TB MODELLING 2/Resource Factors")
+gdp <- read_csv("gdp_percapita.csv", skip = 4)
+health_exp1 <- read_csv("gov_health_2015_2018.csv", skip = 4)
+health_exp2 <- read_csv("dom_gov_health_2015_2018.csv")
+schl_pop <- read_csv("data_bank.csv")
+```
+
+STEP 2: Refining GDP data
+
+```{r}
+colnames(gdp)
+gdp1 <- gdp[, c(1,2, 60:65)]
+colnames(gdp1)[colnames(gdp1) == "Country Code"] <- "iso3"
+merge_gdp <- merge(bigdata_TB, gdp1, by = "iso3", all.x = TRUE)
+merge_gdp <- merge_gdp[, -39]
+colnames(merge_gdp)[colnames(merge_gdp) == "2015"] <- "gdp_2015"
+colnames(merge_gdp)[colnames(merge_gdp) == "2016"] <- "gdp_2016"
+colnames(merge_gdp)[colnames(merge_gdp) == "2017"] <- "gdp_2017"
+colnames(merge_gdp)[colnames(merge_gdp) == "2018"] <- "gdp_2018"
+colnames(merge_gdp)[colnames(merge_gdp) == "2019"] <- "gdp_2019"
+colnames(merge_gdp)[colnames(merge_gdp) == "2020"] <- "gdp_2020"
+merge_gdp$perc_tot014[merge_gdp$perc_tot014 == Inf] <- NA 
+merge_gdp$perc_tot014[merge_gdp$gdp_2019 == Inf] <- NA 
+
+
+#Regression with GDP
+mod_gdp <- lm(merge_gdp$perc_tot014 ~ merge_gdp$gdp_2019)
+summary(mod_gdp)
+
+plot(x = merge_gdp$gdp_2019, y = merge_gdp$perc_tot014, xlab = "gdp_2019", ylab = "perc_tot014")
+abline(mod_gdp, col = "red", lwd = 2)
+
+```
+STEP 3: Refining the school enrollment data
+
+```{r}
+unique(schl_pop$`Series Name`)
+schl_enrol <- filter(schl_pop, schl_pop$`Series Name` == "School enrollment, secondary (% net)")
+schl_enrol <- schl_enrol[, -c(1:2)]
+schl_enrol[schl_enrol == ".."] <- NA
+colnames(schl_enrol)[colnames(schl_enrol) == "2018 [YR2018]"] <- "schl_2018"
+colnames(schl_enrol)[colnames(schl_enrol) == "Country Code"] <- "iso3"
+schl_gdp <- merge(merge_gdp, schl_enrol, by = "iso3", all.x = TRUE)
+schl_gdp <- schl_gdp[, -c(45:48, 50:51)]
+schl_gdp$schl_2018 <- as.numeric(schl_gdp$schl_2018)
+
+#Creating a regression analysis with school attendance 
+mod_schl <- lm(schl_gdp$perc_tot014 ~ schl_gdp$schl_2018)
+summary(mod_schl)
+
+plot(schl_gdp$schl_2018, schl_gdp$perc_tot014, xlab = "schl_enrolment", ylab = "perc_tot_014")
+abline(mod_schl, col = "red", lwd = 2)
+
+```
+STEP 4: Refining data for percentage rural population
+
+```{r}
+rural_pop <- filter(schl_pop, schl_pop$`Series Name` == "Rural population (% of total population)")
+rural_pop <- rural_pop[, -c(1,2)]
+colnames(rural_pop) <- c("Country", "iso3", "rural_2015", "rural_2016", "rural_2017", "rural_2018", "rural_2019", "rural_2020")
+rural_tb <- merge(schl_gdp, rural_pop, by = "iso3", all.x = TRUE)
+rural_tb <- rural_tb[, -46]
+rural_tb$rural_2019 <- as.numeric(rural_tb$rural_2019)
+
+#Regression with rural population percentage in 2019
+mod_rural <- lm(rural_tb$perc_tot014 ~ rural_tb$rural_2019)
+summary(mod_rural)
+
+plot(x = rural_tb$rural_2019, y = rural_tb$perc_tot014, xlab = "rural_2019", ylab = "perc_tot014")
+abline(mod_rural, col = "red", lwd = 2)
+```
+
+STEP 5: Refining data on undernourishment 
+
+```{r}
+under5 <- filter(schl_pop, schl_pop$`Series Name` == "Mortality rate, under-5 (per 1,000)")
+under5 <- under5[, -c(1:2)]
+colnames(under5) <- c("Country", "iso3", "mort5_2015", "mort5_2016", "mort5_2017", "mort5_2018", "mort5_2019", "mort5_2020")
+under5$mort5_2019 <- as.numeric(under5$mort5_2019)
+under5[under5 == ".."] <- NA
+under5_tb <- merge(rural_tb, under5, by = "iso3", all.x = TRUE)
+under5_tb <- under5_tb[, -52]
+
+#Regression analysis with under 5 mortality 
+under5_tb$perc_tot04[under5_tb$perc_tot04 == Inf] <- NA
+mod_under5 <- lm(under5_tb$perc_tot04 ~ under5_tb$mort5_2019)
+summary(mod_under5)
+
+plot(x = under5_tb$mort5_2019, y = under5_tb$perc_tot04, xlab = "mort5_2019", ylab = "perc_tot04")
+abline(mod_under5, col = "red", lwd = 2)
+
+```
+
