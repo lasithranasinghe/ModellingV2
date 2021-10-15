@@ -116,4 +116,28 @@ summary(mod_culture_514)
 plot(x = big_labequip$adj_culture, y = big_labequip$perc_tot514, xlab = "adj_culture", ylab = "perc_tot514")
 abline(mod_culture_514, col = "red", lwd = 2)
 ```
+STEP 11: Adding data for community health worker numbers (adjusting for population size)
+
+```{r}
+setwd("~/Desktop/AFP/TB MODELLING 2/Resource Factors")
+chw <- read_csv("chw.csv")
+colnames(chw) <- c("country.x", "year", "chw")
+chw_2019 <- filter(chw, year == 2019)
+chw_2019 <- chw_2019[, -2]
+
+#Getting total population data from the data_bank file
+setwd("~/Desktop/AFP/TB MODELLING 2/Resource Factors")
+tot_pop <- read_csv("data_bank.csv")
+tot_pop <- filter(tot_pop, tot_pop$`Series Name` == "Population, total")
+tot_pop <- tot_pop[, -c(1:2)]
+colnames(tot_pop) <- c("country", "iso3", "tot_pop_2015", "tot_pop_2016", "tot_pop_2017", "tot_pop_2018", "tot_pop_2019", "tot_pop_2020")
+
+merge_pop <- merge(big_labequip, tot_pop, by = "iso3", all.x = TRUE)
+merge_pop <- merge_pop[, -46]
+lab_data <- merge_pop
+
+#Putting the chw data into the data frame 
+merge_chw <- merge(merge_pop, chw_2019, by = "country.x", all.x = TRUE)
+```
+
 

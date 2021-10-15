@@ -83,4 +83,3 @@ abline(ltfu_014, col = "red", lwd = 2)
 
 
 ```
-

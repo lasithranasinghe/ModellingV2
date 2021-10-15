@@ -50,4 +50,3 @@ dif_04 <- dif_04[ , c(1, 2, 3, 6, 9, 10, 4, 7, 11, 12, 5, 8, 13, 14)]
 colnames(dif_04)[colnames(dif_04) == "total_est04"] <- "est_tot04"
 colnames(dif_04)[colnames(dif_04) == "total_notif04"] <- "notif_tot04"
 ```
-
